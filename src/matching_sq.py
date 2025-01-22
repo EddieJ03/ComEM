@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.utils import gen_batches
 from tqdm.contrib.concurrent import thread_map
 
-from src.utils import Seq2SeqWrapper
+from utils import Seq2SeqWrapper
 
 
 class MatchingSQ:

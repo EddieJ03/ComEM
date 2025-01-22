@@ -8,7 +8,7 @@ from rich import print
 from sklearn.metrics import classification_report, confusion_matrix
 from tqdm.contrib.concurrent import thread_map
 
-from src.utils import APICostCalculator, openai_chat_complete
+from utils import APICostCalculator, openai_chat_complete
 
 
 class Selecting:

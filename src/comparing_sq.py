@@ -11,8 +11,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.utils import gen_batches
 from tqdm.contrib.concurrent import thread_map
 
-from src.matching_sq import MatchingSQ
-from src.utils import Seq2SeqWrapper
+from matching_sq import MatchingSQ
+from utils import Seq2SeqWrapper
 
 
 class ComparingSQ:

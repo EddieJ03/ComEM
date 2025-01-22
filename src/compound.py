@@ -1,4 +1,3 @@
-from collections import deque
 from pathlib import Path
 from typing import Literal
 
@@ -7,13 +6,13 @@ from rich import print
 from sklearn.metrics import classification_report, confusion_matrix
 from tqdm.contrib.concurrent import thread_map
 
-from src.comparing_sq import ComparingSQ
-from src.matching_sq import MatchingSQ
-from src.selecting import Selecting
+from comparing_sq import ComparingSQ
+from matching_sq import MatchingSQ
+from selecting import Selecting
 
 RANKING_STRATEGY = "matching"
-THRESHOLD = 0.5
 
+THRESHOLD = 0.5 # can be customized
 
 class ComEM:
     ranking_strategy: Literal["matching", "comparing"] = "matching"
@@ -53,6 +52,8 @@ class ComEM:
         preds_k = self.selector(instance_k)
         for i, pred in enumerate(preds_k):
             preds[indexes[i]] = pred
+
+        assert len(preds) == len(instance["candidates"]), "Prediction length mismatch"
 
         return preds
 

@@ -83,7 +83,7 @@ Record 2: {{ record_right }}
         scores = self.score(instance, use_prob=True)
         indexes = list(range(len(instance["candidates"])))
         indexes = [
-            x for _, x in sorted(zip(scores, indexes, strict=True), reverse=True)
+            item for item in sorted(zip(scores, indexes, strict=True), reverse=True)
         ]
         return indexes
 

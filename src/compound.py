@@ -12,6 +12,7 @@ from src.matching_sq import MatchingSQ
 from src.selecting import Selecting
 
 RANKING_STRATEGY = "matching"
+THRESHOLD = 0.5
 
 
 class ComEM:
@@ -37,17 +38,21 @@ class ComEM:
         elif self.ranking_strategy == "comparing":
             indexes = self.ranker.pairwise_rank(instance, topK=topK)
 
-        indexes_k = indexes[:topK]
+        indexes_k = [idx for _, idx in indexes[:topK]]
+
+        indexes_threshold = [idx for score, idx in indexes if score >= THRESHOLD]
+
         preds = [False] * len(instance["candidates"])
-        dq = deque(indexes[:topK])
-        indexes_k = list(dq)
+        
+        indexes = indexes_threshold if len(indexes_threshold) > len(indexes_k) else indexes_k
+
         instance_k = {
             "anchor": instance["anchor"],
-            "candidates": [instance["candidates"][idx] for idx in indexes_k],
+            "candidates": [instance["candidates"][idx] for idx in indexes],
         }
         preds_k = self.selector(instance_k)
         for i, pred in enumerate(preds_k):
-            preds[indexes_k[i]] = pred
+            preds[indexes[i]] = pred
 
         return preds
 

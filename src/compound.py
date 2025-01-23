@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
         results[dataset] = classification_report(
             labels[: len(preds)], preds, output_dict=True
-        )["True"]
+        )["1"]
         results[dataset].pop("support")
         for k, v in results[dataset].items():
             results[dataset][k] = v * 100

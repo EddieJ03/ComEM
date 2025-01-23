@@ -27,7 +27,7 @@ Record 2: {{ record_right }}
         model_name: str = "flan-t5-xxl",
         template: Template = template,
     ):
-        self.wrapper = Seq2SeqWrapper(model_name)
+        self.wrapper = Seq2SeqWrapper(model_name, Path('google'))
         self.template = template
 
         cache = Cache(f"results/diskcache/matching_{model_name}")

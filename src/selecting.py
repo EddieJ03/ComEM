@@ -13,7 +13,7 @@ from utils import APICostCalculator, openai_chat_complete
 
 class Selecting:
     template = Template(
-        """Select all records from the following candidates that refer to the same real-world entity as the given record. Answer with the corresponding record number surrounded by "[]" or "[0]" if there are none.
+        """Select all records from the following candidates that refer to the same real-world entity as the given record. Answer with each corresponding record number surrounded by "[]" or "[0]" if there are none.
 
 Given entity record:
 {{ anchor }}
@@ -53,7 +53,6 @@ Candidate records:{% for candidate in candidates %}
             temperature=0.0,
             logprobs=self.model.startswith("gpt"),
             top_logprobs=3 if self.model.startswith("gpt") else None,
-            max_tokens=3,
         )
 
         matches = re.findall(r"\[(\d+)\]", response.choices[0].message.content.strip())

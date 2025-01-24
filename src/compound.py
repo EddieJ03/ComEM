@@ -4,7 +4,7 @@ from typing import Literal
 import pandas as pd
 from rich import print
 from sklearn.metrics import classification_report, confusion_matrix
-from tqdm.contrib.concurrent import thread_map
+from concurrent.futures import ThreadPoolExecutor
 
 from comparing_sq import ComparingSQ
 from matching_sq import MatchingSQ
@@ -90,20 +90,17 @@ if __name__ == "__main__":
             for _, v in groupby
         ]
 
-        preds_lst = thread_map(
-            lambda it: compound(it, topK=4),
-            instances,
-            max_workers=16,
-        )
+        with ThreadPoolExecutor(max_workers=16) as executor:
+            preds_lst = list(executor.map(lambda it: compound(it, topK=4), instances))
+
         preds = [pred for preds in preds_lst for pred in preds]
         labels = [label for it in instances for label in it["labels"]]
 
         print(classification_report(labels[: len(preds)], preds, digits=4))
         print(confusion_matrix(labels[: len(preds)], preds))
 
-        results[dataset] = classification_report(
-            labels[: len(preds)], preds, output_dict=True
-        )["1"]
+        report = classification_report(labels[: len(preds)], preds, output_dict=True)
+        results[dataset] = report['1']
         results[dataset].pop("support")
         for k, v in results[dataset].items():
             results[dataset][k] = v * 100

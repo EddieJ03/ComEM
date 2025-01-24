@@ -8,6 +8,15 @@
   <img align=middle src="https://github.com/tshu-w/ComEM/assets/13161779/41790e40-db87-4061-8442-0383402865b2" alt="Compound EM framework" width="45%">
 </div>
 
+## Adaptation for Building Conversational Recommender Systems Without Domain-Specific Training Data Project
+
+- Use Conda to run 
+`conda env create -f environment.yaml`
+then `conda activate llm4em`
+- In ComEM folder make folder called `data/llm4em` and add in any datasets in CSV style
+  - Make sure to change header row in the CSV to the following: `id_left,id_right,record_left,record_right,label`
+- Run `python src/compound.py`
+
 ## News
 
 - [2024-12-01] 🎉 Our paper has been accepted at [COLING 2025](https://coling2025.org).

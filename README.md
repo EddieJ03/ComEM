@@ -16,6 +16,7 @@ then `conda activate llm4em`
 - In ComEM folder make folder called `data/llm4em` and add in any datasets in CSV style
   - Make sure to change header row in the CSV to the following: `id_left,id_right,record_left,record_right,label`
 - Add Open AI key as environment variable to `utils.py`
+- Feel free to change THRESHOLD constant in `compound.py` at top of file. This is used to assist in choosing possible candidates by probability instead of focusing on topK.
 - Run `python src/compound.py`
 
 ## News

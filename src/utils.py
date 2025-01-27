@@ -1,4 +1,5 @@
 from functools import partial, wraps
+import os
 from pathlib import Path
 
 from openai import OpenAI
@@ -173,6 +174,8 @@ class APICostCalculator:
             raise ValueError(f"Unknown model name: {model_name}")
         self._model_name = model_name
         self._cost = 0
+        self._prompt_tokens = 0
+        self._completion_tokens = 0
 
     def __call__(self, func):
         @wraps(func)
@@ -187,6 +190,8 @@ class APICostCalculator:
                 * response.usage.completion_tokens
             ) / 1000000.0
             self._cost += cost
+            self._prompt_tokens += response.usage.prompt_tokens
+            self._completion_tokens += response.usage.completion_tokens
             return response
 
         return wrapper
@@ -194,7 +199,23 @@ class APICostCalculator:
     @property
     def cost(self):
         return self._cost
+    
+    @property
+    def prompt_tokens(self):
+        return self._prompt_tokens
+    
+    @property
+    def completion_tokens(self):
+        return self._completion_tokens
 
     @cost.setter
     def cost(self, value: int):
         self._cost = value
+
+    @completion_tokens.setter
+    def completion_tokens(self, value: int):
+        self._completion_tokens = value
+
+    @prompt_tokens.setter
+    def prompt_tokens(self, value: int):
+        self._prompt_tokens = value

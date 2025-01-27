@@ -4,15 +4,12 @@ from typing import Literal
 import pandas as pd
 from rich import print
 from sklearn.metrics import classification_report, confusion_matrix
-from concurrent.futures import ThreadPoolExecutor
 
 from comparing_sq import ComparingSQ
 from matching_sq import MatchingSQ
 from selecting import Selecting
 
 RANKING_STRATEGY = "matching"
-
-THRESHOLD = 0.5 # can be customized
 
 class ComEM:
     ranking_strategy: Literal["matching", "comparing"] = "matching"
@@ -31,7 +28,7 @@ class ComEM:
             self.ranker = ComparingSQ(model_name=ranking_model_name)
         self.selector = Selecting(model_name=selecting_model_name)
 
-    def __call__(self, instance, topK: int = 1) -> list[bool]:
+    def __call__(self, instance, threshold: float = 0.5,  topK: int = 1) -> list[bool]:
         if self.ranking_strategy == "matching":
             indexes = self.ranker.pointwise_rank(instance)
         elif self.ranking_strategy == "comparing":
@@ -39,7 +36,7 @@ class ComEM:
 
         indexes_k = [idx for _, idx in indexes[:topK]]
 
-        indexes_threshold = [idx for score, idx in indexes if score >= THRESHOLD]
+        indexes_threshold = [idx for score, idx in indexes if score >= threshold]
 
         preds = [False] * len(instance["candidates"])
         
@@ -60,6 +57,14 @@ class ComEM:
     @property
     def cost(self):
         return self.selector.cost
+    
+    @property
+    def prompt_tokens(self):
+        return self.selector.prompt_tokens
+    
+    @property
+    def completion_tokens(self):
+        return self.selector.completion_tokens
 
     @cost.setter
     def cost(self, value: int):
@@ -90,8 +95,7 @@ if __name__ == "__main__":
             for _, v in groupby
         ]
 
-        with ThreadPoolExecutor(max_workers=16) as executor:
-            preds_lst = list(executor.map(lambda it: compound(it, topK=4), instances))
+        preds_lst = [compound(it, threshold=0.5, topK=4) for it in instances]
 
         preds = [pred for preds in preds_lst for pred in preds]
         labels = [label for it in instances for label in it["labels"]]
@@ -113,4 +117,7 @@ if __name__ == "__main__":
     df = pd.DataFrame.from_dict(results, orient="index")
     print(df)
     print(df.to_csv(float_format="%.2f", index=False))
-    print(f"{compound.cost:.2f}")
+    
+    print(f"Cost: {compound.cost:.2f}")
+    print(f"Completion Tokens: {compound.completion_tokens:.2f}")
+    print(f"Prompt Tokens: {compound.prompt_tokens:.2f}")

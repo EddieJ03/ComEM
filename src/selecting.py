@@ -74,6 +74,22 @@ Candidate records:{% for candidate in candidates %}
     def cost(self, value: int):
         self.api_cost_decorator.cost = value
 
+    @property
+    def prompt_tokens(self):
+        return self.api_cost_decorator.prompt_tokens
+
+    @prompt_tokens.setter
+    def prompt_tokens(self, value: int):
+        self.api_cost_decorator.prompt_tokens = value
+
+    @property
+    def completion_tokens(self):
+        return self.api_cost_decorator.completion_tokens
+
+    @completion_tokens.setter
+    def completion_tokens(self, value: int):
+        self.api_cost_decorator.completion_tokens = value
+
 
 if __name__ == "__main__":
     results = {}

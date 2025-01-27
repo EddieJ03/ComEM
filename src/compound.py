@@ -28,20 +28,15 @@ class ComEM:
             self.ranker = ComparingSQ(model_name=ranking_model_name)
         self.selector = Selecting(model_name=selecting_model_name)
 
-    def __call__(self, instance, threshold: float = 0.5,  topK: int = 1) -> list[bool]:
+    def __call__(self, instance, topK: int = 1) -> list[bool]:
         if self.ranking_strategy == "matching":
             indexes = self.ranker.pointwise_rank(instance)
         elif self.ranking_strategy == "comparing":
             indexes = self.ranker.pairwise_rank(instance, topK=topK)
 
-        indexes_k = [idx for _, idx in indexes[:topK]]
-
-        indexes_threshold = [idx for score, idx in indexes if score >= threshold]
+        indexes = [idx for _, idx in indexes[:topK]]
 
         preds = [False] * len(instance["candidates"])
-        
-        indexes = indexes_threshold if len(indexes_threshold) > len(indexes_k) else indexes_k
-
         instance_k = {
             "anchor": instance["anchor"],
             "candidates": [instance["candidates"][idx] for idx in indexes],
@@ -95,7 +90,7 @@ if __name__ == "__main__":
             for _, v in groupby
         ]
 
-        preds_lst = [compound(it, threshold=0.5, topK=4) for it in instances]
+        preds_lst = [compound(it, topK=8) for it in instances]
 
         preds = [pred for preds in preds_lst for pred in preds]
         labels = [label for it in instances for label in it["labels"]]

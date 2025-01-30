@@ -35,7 +35,7 @@ def get_best_k(k_results):
     best_metrics = (-1, -1, -1)  # (f1, recall, precision)
     
     for k, metrics in k_results.items():
-        current_metrics = (metrics['f1'], metrics['precision'], metrics['recall'])
+        current_metrics = (metrics['f1'], metrics['recall'], metrics['precision'])
         if current_metrics > best_metrics:  # Tuple comparison will check in order
             best_metrics = current_metrics
             best_k = k

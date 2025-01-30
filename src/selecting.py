@@ -27,15 +27,21 @@ Candidate records:{% for candidate in candidates %}
         self,
         model_name: str = "gpt-4o-mini",
         template: Template = template,
+        use_cache: bool = True,
     ):
         self.model = model_name
         self.template = template
 
         self.api_cost_decorator = APICostCalculator(model_name=model_name)
-        cache = Cache(f"results/diskcache/selecting_{model_name}")
-        self.chat_complete = self.api_cost_decorator(
-            cache.memoize(name="chat_complete")(openai_chat_complete)
-        )
+
+        if use_cache:
+            cache = Cache(f"results/diskcache/selecting_{model_name}")
+            self.chat_complete = self.api_cost_decorator(
+                cache.memoize(name="chat_complete")(openai_chat_complete)
+            )
+        else:
+            self.chat_complete = self.api_cost_decorator(openai_chat_complete)
+
 
     def __call__(self, instance) -> list[bool]:
         response = self.chat_complete(

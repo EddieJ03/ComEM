@@ -19,6 +19,7 @@ class ComEM:
         ranking_model_name: str = "flan-t5-xl",
         selecting_model_name: str = "gpt-4o-mini",
         ranking_strategy: Literal["matching", "comparing"] = ranking_strategy,
+        use_cache: bool = True,
     ):
         self.ranking_model_name = ranking_model_name
         self.selecting_model_name = selecting_model_name
@@ -26,7 +27,7 @@ class ComEM:
             self.ranker = MatchingSQ(model_name=ranking_model_name)
         elif self.ranking_strategy == "comparing":
             self.ranker = ComparingSQ(model_name=ranking_model_name)
-        self.selector = Selecting(model_name=selecting_model_name)
+        self.selector = Selecting(model_name=selecting_model_name, use_cache=use_cache)
 
     def __call__(self, instance, topK: int = 1) -> list[bool]:
         if self.ranking_strategy == "matching":

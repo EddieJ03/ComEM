@@ -91,7 +91,7 @@ if __name__ == "__main__":
             for _, v in groupby
         ]
 
-        preds_lst = [compound(it, topK=8) for it in instances]
+        preds_lst = [compound(it, topK=9) for it in instances]
 
         preds = [pred for preds in preds_lst for pred in preds]
         labels = [label for it in instances for label in it["labels"]]
